@@ -157,14 +157,7 @@ void Game::process_events(bool& running)
     {
       running = false;
     }
-    else if(e.type==SDL_GAMEPAD_AXIS_LEFT_TRIGGER)
-    {
-        
-    }
-    else if (e.type == SDL_GAMEPAD_AXIS_RIGHT_TRIGGER)
-    {
 
-    }
   }
 }
 
@@ -184,13 +177,23 @@ void Game::update()
   // it; pushing away from you raises the camera.  Camera::orbit keeps the
   // target still and the distance to it unchanged, and stops short of directly
   // overhead, where there would be no telling which way is up (gimbal lock).
-  const glm::vec2 right = pads_.stick(Stick::Left);
+  const glm::vec2 right = pads_.stick(Stick::Right);
   if (right.x != 0.0f || right.y != 0.0f)
   {
     camera_.orbit(+right.x * turn_rate * dt, +right.y * turn_rate * dt);
   }
 
-    pads_.axis(SDL_GAMEPAD_AXIS_LEFT_TRIGGER);
+  const glm::vec2 left = pads_.stick(Stick::Left);
+  if (right.x != 0.0f || right.y != 0.0f)
+  {
+      camera_.move_local(glm::vec3{ left.x, 0, left.y} * turn_rate * dt * radius_ * dt);
+  }
+
+  float lt = pads_.axis(SDL_GAMEPAD_AXIS_LEFT_TRIGGER);
+  camera_.move_position({ 1.0f, 0, 0 });
+  
+  //float rt = pads_.axis(SDL_GAMEPAD_AXIS_RIGHT_TRIGGER);
+  //camera_.move_position({ 0, 1.0f, 0 });
 
 
   // The clip planes follow the camera, so that the depth buffer spends its
